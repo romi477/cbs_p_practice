@@ -1,8 +1,9 @@
 from peewee import (SqliteDatabase, Model, IntegerField, DoubleField,
                     DateTimeField, datetime as peewee_datetime)
+from config import DB_NAME
 
 
-db = SqliteDatabase('currency_snake.db')
+db = SqliteDatabase(DB_NAME)
 
 class XRate(Model):
     class Meta:
@@ -18,7 +19,7 @@ class XRate(Model):
     updated = DateTimeField(default=peewee_datetime.datetime.now())
 
     def __repr__(self):
-        return f'XRate <{self.from_currency} --> {self.to_currency}: {self.rate}>'
+        return f'<XRate {self.from_currency}=>{self.to_currency}: {self.rate}>'
 
 
 def init_db():
