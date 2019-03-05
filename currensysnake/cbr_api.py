@@ -25,4 +25,42 @@ def update_xrates(from_currency, to_currency):
 
 
 def get_cbr_rate(from_currency):
-    pass
+    response = requests.get(url)
+    log.debug(f'response.encoding: {response.encoding}')
+    response_text = response.text
+    log.debug(f'response.text: {response_text}')
+    usd_rate = find_usd_rate(response_text)
+    return usd_rate
+
+def find_usd_rate(response_text):
+    root = ET.fromstring(response_text)
+    valutes = root.findall('Valute')
+
+    for valute in valutes:
+        if valute.find('CharCode').text == 'USD':
+            print(valute)
+            return float(valute.find('Value').text.replace(',', '.'))
+    raise ValueError('Invalid Cbr response: USD not found!')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
