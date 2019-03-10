@@ -7,3 +7,5 @@ LOGGER_CONFIG = {
     'file': 'logfile.log',
     'formatter': logging.Formatter('%(asctime)s [%(levelname)s] - %(name)s: %(message)s')
 }
+
+HTTP_TIMEOUT = 5
