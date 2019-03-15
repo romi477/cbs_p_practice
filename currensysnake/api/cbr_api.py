@@ -2,7 +2,7 @@ import xml.etree.ElementTree as ET
 from . import _Api
 
 
-class CbrApi(_Api):
+class Api(_Api):
     def __init__(self):
         super().__init__('cbr_api')
 

@@ -1,7 +1,7 @@
 from . import _Api
 
 
-class PrivatApi(_Api):
+class Api(_Api):
     def __init__(self):
         super().__init__('privat_api')
 
@@ -17,7 +17,10 @@ class PrivatApi(_Api):
         return usd_rate
 
     def _find_usd_rate(self, response_data, from_currency):
-        privat_aliases_map = {840: 'USD'}
+        privat_aliases_map = {840: 'USD', 1000: 'BTC'}
+        if from_currency not in privat_aliases_map:
+            raise ValueError(f'Invalid from currency: {from_currency}')
+
         currency_alias = privat_aliases_map[from_currency]
         for i in response_data:
             if i['ccy'] == currency_alias:

@@ -1,4 +1,5 @@
 import traceback
+import importlib
 import requests
 
 from models import XRate, peewee_datetime, ApiLog, ErrorLog
@@ -9,6 +10,12 @@ fh = logging.FileHandler(LOGGER_CONFIG['file'])
 fh.setLevel(LOGGER_CONFIG['level'])
 fh.setFormatter(LOGGER_CONFIG['formatter'])
 
+def update_rate(from_currency, to_currency):
+    xrate = XRate.select().where(XRate.from_currency == from_currency,
+                                 XRate.to_currency == to_currency).first()
+
+    module = importlib.import_module(f"api.{xrate.module}")
+    module.Api().update_rate(xrate)
 
 class _Api:
     def __init__(self, logger_name):
@@ -16,16 +23,14 @@ class _Api:
         self.log.addHandler(fh)
         self.log.setLevel(LOGGER_CONFIG['level'])
 
-    def update_rate(self, from_currency, to_currency):
-        self.log.info(f'Start update for: {from_currency}=>{to_currency}')
-        xrate = XRate.select().where(XRate.from_currency == from_currency, XRate.to_currency == to_currency).first()
+    def update_rate(self, xrate):
+        self.log.info(f'Start update for: {xrate}')
+
         self.log.debug(f'rate before: {xrate.rate}')
         xrate.rate = self._update_rate(xrate)
         xrate.updated = peewee_datetime.datetime.now()
         xrate.save()
-        self.log.debug(f'rate after: {xrate.rate}')
-        self.log.info(f'Update finished for: {from_currency}=>{to_currency}')
-        self.log.info('*************************************')
+
 
     def _update_rate(self, xrate):
         raise NotImplementedError('_update_rate')
